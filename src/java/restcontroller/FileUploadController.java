@@ -1,4 +1,4 @@
-package com.techeazy.aws.batch2.restcontroller;
+package java.restcontroller;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.techeazy.aws.batch2.service.S3Service;
+import java.service.S3Service;
 
 @RestController
 @RequestMapping("/api/fileupload")
