@@ -1,4 +1,4 @@
-package com.techeazy.aws.batch2;
+package java;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
