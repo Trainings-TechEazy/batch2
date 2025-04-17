@@ -26,6 +26,8 @@ public class S3Service {
 	@Value("${aws.s3.bucket-name}")
 	private String bucketName;
 
+
+
 	public void uploadToS3(String localFilePath, String key) {
 
 		AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
