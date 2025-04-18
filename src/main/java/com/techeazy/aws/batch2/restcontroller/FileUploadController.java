@@ -2,8 +2,10 @@ package com.techeazy.aws.batch2.restcontroller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +22,12 @@ public class FileUploadController {
 	@Autowired
 	private S3Service s3Service;
 
+	// Added GET method to return list of files
+    @GetMapping("/files")
+    public List<String> getUserFiles(@RequestParam String userName) {
+    	return s3Service.listFiles(userName);
+    }
+	
 	@PostMapping
 	public String uploadFile(@RequestPart("file") MultipartFile file, @RequestParam("username") String username)
 			throws IOException {
