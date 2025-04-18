@@ -1,16 +1,22 @@
 package com.techeazy.aws.batch2.service;
 
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 @Service
 public class S3Service {
@@ -44,5 +50,23 @@ public class S3Service {
 		}
 
 		s3.close();
+	}
+
+	
+	//Method method to find findALl Files
+	private final S3Client s3Client;
+	
+	public S3Service() {
+		this.s3Client = S3Client.builder().region(Region.US_EAST_1) // Replace with your bucket's region
+				.credentialsProvider(ProfileCredentialsProvider.create()).build();
+	}
+
+	
+	public List<String> listFiles(String userName) {
+		ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(bucketName).prefix(userName + "/").build();
+
+		ListObjectsV2Response result = s3Client.listObjectsV2(request);
+
+		return result.contents().stream().map(S3Object::key).collect(Collectors.toList());
 	}
 }
