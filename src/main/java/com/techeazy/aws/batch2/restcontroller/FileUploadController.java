@@ -28,7 +28,18 @@ public class FileUploadController {
 			return "Upload failed: file is empty.";
 		}
 
-		String filePath = "/tmp/" + username + "-" + file.getOriginalFilename();
+// filePath is not working in Windows OS 		
+// Hence making changes in filePath code	
+// Linux-style path "/tmp/", which will not work in Windows OS, where /tmp/ doesn't exist	
+		
+// Get Temp Dir path, storing it in String 		
+		String tempDir = System.getProperty("java.io.tmpdir");
+//		System.out.println(tempDir);
+		
+//		String filePath = "/tmp/" + username + "-" + file.getOriginalFilename();
+		String filePath = tempDir + username + "-" + file.getOriginalFilename();
+//		System.out.println(filePath);
+
 		file.transferTo(new File(filePath));
 
 		s3Service.uploadToS3(filePath, file.getOriginalFilename());
