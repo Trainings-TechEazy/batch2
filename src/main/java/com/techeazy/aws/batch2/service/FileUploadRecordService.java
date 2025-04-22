@@ -1,5 +1,8 @@
 package com.techeazy.aws.batch2.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,4 +27,25 @@ public class FileUploadRecordService {
         repository.save(fileUploadRecordEntity);
 	
     }
+    public List<String> getFileNamesByUser(String userName) {
+        return repository.findFileNamesByUserName(userName);
+    }
+    
+    public List<FileUploadRecordDTO> getAllUploadRecords() {
+        List<FileUploadRecordEntity> entities = repository.findAll();
+
+        return entities.stream()
+        		.map(entity -> {
+		            FileUploadRecordDTO dto = new FileUploadRecordDTO();
+		            dto.setFileName(entity.getFileName());
+		            dto.setETag(entity.getETag());
+		            dto.setUserName(entity.getUserName());
+		            dto.setUploadedAt(entity.getUploadedAt());
+		            return dto;
+        			})
+        		.collect(Collectors.toList());
+    }
+
+    
+    
 }
