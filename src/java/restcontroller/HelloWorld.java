@@ -1,4 +1,4 @@
-package com.techeazy.aws.batch2.restcontroller;
+package java.restcontroller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

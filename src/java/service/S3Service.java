@@ -1,4 +1,4 @@
-package com.techeazy.aws.batch2.service;
+package java.service;
 
 import java.nio.file.Paths;
 
