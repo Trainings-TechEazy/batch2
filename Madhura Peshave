@@ -1,0 +1,3 @@
+git clone https://github.com/madhura/TechEazy.git
+cd TechEazy
+git checkout -b feature/add-navbar
