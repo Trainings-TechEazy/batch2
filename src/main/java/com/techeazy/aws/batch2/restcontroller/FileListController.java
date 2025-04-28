@@ -15,7 +15,9 @@ public class FileListController {
     private S3Service s3Service;
 
     @GetMapping
-    public List<String> listUserFiles(@RequestParam String username) {
-        return s3Service.listFilesForUser(username);
+    public List<String> listUserFiles(
+            @RequestParam String username,
+            @RequestParam(required = false) List<String> filenames) {
+        return s3Service.listFilesForUser(username, filenames);
     }
 }

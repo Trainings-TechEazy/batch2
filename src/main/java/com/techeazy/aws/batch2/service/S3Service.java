@@ -3,6 +3,7 @@ package com.techeazy.aws.batch2.service;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,6 @@ public class S3Service {
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
 
-    
     public void uploadToS3(String localFilePath, String key) {
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
 
@@ -57,8 +57,7 @@ public class S3Service {
         }
     }
 
-  
-    public List<String> listFilesForUser(String username) {
+    public List<String> listFilesForUser(String username, List<String> filenames) {
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
 
         S3Client s3 = S3Client.builder()
@@ -71,7 +70,7 @@ public class S3Service {
         try {
             ListObjectsV2Request listReq = ListObjectsV2Request.builder()
                     .bucket(bucketName)
-                    .prefix(username + "/") // Assuming files are stored under username/
+                    .prefix(username + "/") // Important: Only that user's files
                     .build();
 
             ListObjectsV2Response listRes = s3.listObjectsV2(listReq);
@@ -80,12 +79,29 @@ public class S3Service {
                 fileNames.add(obj.key());
             }
 
+            if (fileNames.isEmpty()) {
+                return List.of("No files found for user: " + username);
+            }
+
+            if (filenames != null && !filenames.isEmpty()) {
+                List<String> filteredFiles = fileNames.stream()
+                        .filter(file -> filenames.contains(Paths.get(file).getFileName().toString()))
+                        .collect(Collectors.toList());
+
+                if (filteredFiles.isEmpty()) {
+                    return List.of("No matching files found for provided list.");
+                }
+
+                return filteredFiles;
+            } else {
+                return fileNames;
+            }
+
         } catch (S3Exception e) {
             System.err.println("Listing files failed: " + e.awsErrorDetails().errorMessage());
+            return List.of("Error while listing files: " + e.awsErrorDetails().errorMessage());
         } finally {
             s3.close();
         }
-
-        return fileNames;
     }
 }
