@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,12 +27,15 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 @RequestMapping("/api/fileupload")
 public class FileUploadController {
 
-	@Autowired
 	private S3Service s3Service;
 	
-	@Autowired
 	private FileUploadRecordService fileUploadRecordService;
 
+	public FileUploadController(S3Service s3Service, FileUploadRecordService fileUploadRecordService) {
+		this.s3Service = s3Service;
+		this.fileUploadRecordService = fileUploadRecordService;
+	}
+	
 	@PostMapping
 	public String uploadFile(@RequestPart("file") MultipartFile file, @RequestParam("username") String username)
 			throws IOException {
@@ -42,28 +44,22 @@ public class FileUploadController {
 			return "Upload failed: file is empty.";
 		}
 
-// filePath is not working in Windows OS 		
-// Hence making changes in filePath code	
-// Linux-style path "/tmp/", which will not work in Windows OS, where /tmp/ doesn't exist	
-		
-// Get Temp Dir path, storing it in String 		
-		String tempDir = System.getProperty("java.io.tmpdir");
-//		System.out.println(tempDir);
-		
+
 //		String filePath = "/tmp/" + username + "-" + file.getOriginalFilename();
+		
+		String tempDir = System.getProperty("java.io.tmpdir");
 		String filePath = tempDir + username + "-" + file.getOriginalFilename();
-//		System.out.println(filePath);
 
 		file.transferTo(new File(filePath));
 
 		// Uploading to S3 and getting eTag
-		PutObjectResponse eTagResponse = s3Service.uploadToS3(filePath, file.getOriginalFilename());
+		PutObjectResponse Response = s3Service.uploadToS3(filePath, file.getOriginalFilename());
 		
 		
 		// Prepare DTO
         FileUploadRecordDTO dto = new FileUploadRecordDTO();
         dto.setFileName(file.getOriginalFilename());
-        dto.setETag(eTagResponse.eTag()); // Assuming eTag returned from S3Service
+        dto.setETag(Response.eTag()); // Assuming eTag returned from S3Service
         dto.setUserName(username);
         dto.setUploadedAt(LocalDateTime.now());
         
