@@ -72,13 +72,13 @@ public class S3Service {
 	    try {
 	        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
 	                .bucket(bucketName)
-	                .key(uniqueKeyForFile)  // here, fileName is the object's key
+	                .key(uniqueKeyForFile)  
 	                .build();
 
 	        // Fetch the object from S3
 	        ResponseBytes<GetObjectResponse> objectBytes = s3.getObjectAsBytes(getObjectRequest);
 
-	        return objectBytes.asByteArray();  // Return the file content as byte array
+	        return objectBytes.asByteArray(); 
 
 	    } catch (S3Exception e) {
 	        System.err.println("Download failed: " + e.awsErrorDetails().errorMessage());
@@ -88,7 +88,7 @@ public class S3Service {
 	    }
 	}
 	
-	//
+	//Get List of All Objects of user from bucket
     public List<String> listUserObjects(String username) {
         String prefix = username + "/";
 

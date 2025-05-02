@@ -9,11 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class FileUploadRecordDTO {
+public class UsersFilesDetailsRecordDTO {
 
 
     private String fileName;
-    private String eTag;
     private String userName;
     private LocalDateTime uploadedAt;
 //

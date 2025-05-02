@@ -41,9 +41,4 @@ public class FileDownloadController {
 		            .body(resource);
 		}
 		
-	//fetch file names from s3 bucket	
-		 @GetMapping("/user-files/{username}")
-		    public List<String> listUserFiles(@PathVariable String username) {
-		        return s3Service.listUserObjects(username);
-		    }	
 }

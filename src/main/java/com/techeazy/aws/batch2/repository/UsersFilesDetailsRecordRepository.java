@@ -7,12 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.techeazy.aws.batch2.entity.FileUploadRecordEntity;
+import com.techeazy.aws.batch2.entity.UsersFilesDetailsRecordEntity;
 
 @Repository
-public interface FileUploadRecordRepository extends JpaRepository<FileUploadRecordEntity, Long> {
+public interface UsersFilesDetailsRecordRepository extends JpaRepository<UsersFilesDetailsRecordEntity, Long> {
 	
-	 @Query("SELECT f.fileName FROM FileUploadRecordEntity f WHERE f.userName = :userName")
+	 @Query("SELECT f.fileName FROM UsersFilesDetailsRecordEntity f WHERE f.userName = :userName")
 	    List<String> findFileNamesByUserName(@Param("userName") String userName);	
 	
 }

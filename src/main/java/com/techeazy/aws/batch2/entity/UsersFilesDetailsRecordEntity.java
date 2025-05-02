@@ -15,15 +15,14 @@ import lombok.NoArgsConstructor;
 	@NoArgsConstructor
 	@Data
 	@Entity
-	@Table(name = "file_upload_records")
-	public class FileUploadRecordEntity {
+	@Table(name = "users_files_details_records")
+	public class UsersFilesDetailsRecordEntity {
 
 	    @Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Long id;
 
 	    private String fileName;
-	    private String eTag;
 	    private String userName;
 	    private LocalDateTime uploadedAt;
 

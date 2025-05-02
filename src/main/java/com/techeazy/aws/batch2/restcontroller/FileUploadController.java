@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.techeazy.aws.batch2.dto.FileUploadRecordDTO;
-import com.techeazy.aws.batch2.service.FileUploadRecordService;
+import com.techeazy.aws.batch2.dto.UsersFilesDetailsRecordDTO;
+import com.techeazy.aws.batch2.mapper.DtoMapper;
+import com.techeazy.aws.batch2.service.UsersFilesDetailsManagerService;
 import com.techeazy.aws.batch2.service.S3Service;
 
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
@@ -29,11 +30,11 @@ public class FileUploadController {
 
 	private S3Service s3Service;
 	
-	private FileUploadRecordService fileUploadRecordService;
+	private UsersFilesDetailsManagerService usersFilesDetailsManagerService;
 
-	public FileUploadController(S3Service s3Service, FileUploadRecordService fileUploadRecordService) {
+	public FileUploadController(S3Service s3Service, UsersFilesDetailsManagerService usersFilesDetailsManagerService) {
 		this.s3Service = s3Service;
-		this.fileUploadRecordService = fileUploadRecordService;
+		this.usersFilesDetailsManagerService = usersFilesDetailsManagerService;
 	} 
 	
 	@PostMapping
@@ -52,19 +53,14 @@ public class FileUploadController {
 
 		file.transferTo(new File(filePath));
 
-		// Uploading to S3 and getting eTag
-		PutObjectResponse Response = s3Service.uploadToS3(filePath, file.getOriginalFilename(),username);
+		String fileName = file.getOriginalFilename();
+
+		PutObjectResponse Response = s3Service.uploadToS3(filePath, fileName, username);
 		
-		
-		// Prepare DTO
-        FileUploadRecordDTO dto = new FileUploadRecordDTO();
-        dto.setFileName(file.getOriginalFilename());
-        dto.setETag(Response.eTag()); // Assuming eTag returned from S3Service
-        dto.setUserName(username);
-        dto.setUploadedAt(LocalDateTime.now());
+		UsersFilesDetailsRecordDTO dto = DtoMapper.mapToUsersFilesDetailsRecordDTO(fileName,username);
         
         // Save to DB
-        fileUploadRecordService.saveUploadRecord(dto);
+        usersFilesDetailsManagerService.saveUploadRecord(dto);
 		
 		
 		return String.format("File uploaded by [%s], saved at %s", username, filePath);
@@ -89,38 +85,5 @@ public class FileUploadController {
 		return String.format("File uploaded by [%s], name: %s, privacy: %s, retention: %d days, saved at %s", username,
 				documentName, privacyType, retentionAge, filePath);
 	}
-	
-	
-//Fetch users all files list to show him his files details
-	@GetMapping("/user-files")
-	public ResponseEntity<List<String>> getFilesByUser(@RequestParam("username") String username) {
-	    List<String> fileNames = fileUploadRecordService.getFileNamesByUser(username);
-	    if (fileNames.isEmpty()) {
-	        return ResponseEntity.noContent().build();
-	    }
-	    return ResponseEntity.ok(fileNames);
-	}
-
-//fetch all files list stored in s3 bucket with user names	
-	@GetMapping("/all-files")
-	public ResponseEntity<List<Map<String, String>>> listAllFilesWithUsernames() {
-	    List<FileUploadRecordDTO> records = fileUploadRecordService.getAllUploadRecords();
-
-	    if (records.isEmpty()) {
-	        return ResponseEntity.noContent().build();
-	    }
-
-	    List<Map<String, String>> response = records.stream().map(record -> {
-	        Map<String, String> map = new HashMap<>();
-	        map.put("fileName", record.getFileName());
-	        map.put("userName", record.getUserName());
-	        map.put("eTag", record.getETag());
-	        map.put("uploadedAt", record.getUploadedAt().toString());
-	        return map;
-	    }).collect(Collectors.toList());
-
-	    return ResponseEntity.ok(response);
-	}
-
 	
 }
