@@ -1,11 +1,14 @@
 package com.techeazy.aws.batch2.restcontroller;
 
+import java.util.List;
+
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +28,8 @@ public class FileDownloadController {
 	
 	//fetch file from s3 bucket	
 		@GetMapping("/download")
-		public ResponseEntity<Resource> downloadFile(@RequestParam String fileName) {
-		    byte[] fileData = s3Service.downloadFileFromS3(fileName);
+		public ResponseEntity<Resource> downloadFile(@RequestParam String fileName,@RequestParam String username) {
+		    byte[] fileData = s3Service.downloadFileFromS3(fileName,username);
 
 		    // Wrap byte[] into a Resource
 		    ByteArrayResource resource = new ByteArrayResource(fileData);
@@ -37,4 +40,10 @@ public class FileDownloadController {
 		            .contentLength(fileData.length)
 		            .body(resource);
 		}
+		
+	//fetch file names from s3 bucket	
+		 @GetMapping("/user-files/{username}")
+		    public List<String> listUserFiles(@PathVariable String username) {
+		        return s3Service.listUserObjects(username);
+		    }	
 }

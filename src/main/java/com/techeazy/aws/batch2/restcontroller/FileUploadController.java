@@ -34,7 +34,7 @@ public class FileUploadController {
 	public FileUploadController(S3Service s3Service, FileUploadRecordService fileUploadRecordService) {
 		this.s3Service = s3Service;
 		this.fileUploadRecordService = fileUploadRecordService;
-	}
+	} 
 	
 	@PostMapping
 	public String uploadFile(@RequestPart("file") MultipartFile file, @RequestParam("username") String username)
@@ -53,7 +53,7 @@ public class FileUploadController {
 		file.transferTo(new File(filePath));
 
 		// Uploading to S3 and getting eTag
-		PutObjectResponse Response = s3Service.uploadToS3(filePath, file.getOriginalFilename());
+		PutObjectResponse Response = s3Service.uploadToS3(filePath, file.getOriginalFilename(),username);
 		
 		
 		// Prepare DTO
@@ -78,9 +78,7 @@ public class FileUploadController {
 		if (file.isEmpty()) {
 			return "Upload failed: file is empty.";
 		}
-		
-// filePath is not working in Windows OS 		
-// Hence making changes in filePath code		
+			
 		String tempDir = System.getProperty("java.io.tmpdir");
 
 //		String filePath = "/tmp/" + username + "-" + file.getOriginalFilename();
