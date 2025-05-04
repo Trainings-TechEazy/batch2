@@ -2,15 +2,8 @@ package com.techeazy.aws.batch2.restcontroller;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,12 +15,10 @@ import com.techeazy.aws.batch2.constant.ErrorCodeEnum;
 import com.techeazy.aws.batch2.dto.UsersFilesDetailsRecordDTO;
 import com.techeazy.aws.batch2.exception.FileValidationException;
 import com.techeazy.aws.batch2.mapper.DtoMapper;
+import com.techeazy.aws.batch2.service.S3Service;
 import com.techeazy.aws.batch2.service.UsersFilesDetailsManagerService;
 
 import lombok.extern.slf4j.Slf4j;
-
-import com.techeazy.aws.batch2.service.S3Service;
-
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 @Slf4j

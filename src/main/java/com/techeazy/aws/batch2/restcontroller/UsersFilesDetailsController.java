@@ -47,25 +47,35 @@ public class UsersFilesDetailsController {
 		}
  
 	//fetch all files list stored from DB	
+//		@GetMapping("/all-files")
+//		public ResponseEntity<List<Map<String, String>>> listAllFilesWithUsernames() {
+//		    List<UsersFilesDetailsRecordDTO> records = usersFilesDetailsManagerService.getAllUploadRecords();
+//
+//		    if (records.isEmpty()) {
+//		        return ResponseEntity.noContent().build();
+//		    }
+//
+//		    List<Map<String, String>> response = records.stream().map(record -> {
+//		        Map<String, String> map = new HashMap<>();
+//		        map.put("fileName", record.getFileName());
+//		        map.put("userName", record.getUserName());
+//		        map.put("uploadedAt", record.getUploadedAt().toString());
+//		        return map;
+//		    }).collect(Collectors.toList());
+//
+//		    return ResponseEntity.ok(response);
+//		}
+		
 		@GetMapping("/all-files")
-		public ResponseEntity<List<Map<String, String>>> listAllFilesWithUsernames() {
+		public ResponseEntity<List<UsersFilesDetailsRecordDTO>> listAllFilesWithUsernames() {
 		    List<UsersFilesDetailsRecordDTO> records = usersFilesDetailsManagerService.getAllUploadRecords();
 
 		    if (records.isEmpty()) {
 		        return ResponseEntity.noContent().build();
 		    }
 
-		    List<Map<String, String>> response = records.stream().map(record -> {
-		        Map<String, String> map = new HashMap<>();
-		        map.put("fileName", record.getFileName());
-		        map.put("userName", record.getUserName());
-		        map.put("uploadedAt", record.getUploadedAt().toString());
-		        return map;
-		    }).collect(Collectors.toList());
-
-		    return ResponseEntity.ok(response);
+		    return ResponseEntity.ok(records);
 		}
 
-		
 
 }

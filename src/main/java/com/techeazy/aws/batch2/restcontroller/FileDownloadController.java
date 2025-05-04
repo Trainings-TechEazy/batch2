@@ -29,8 +29,9 @@ public class FileDownloadController {
 	//fetch file from s3 bucket	
 		@GetMapping("/download")
 		public ResponseEntity<Resource> downloadFile(@RequestParam String fileName,@RequestParam String username) {
+			
 		    byte[] fileData = s3Service.downloadFileFromS3(fileName,username);
-
+		    
 		    // Wrap byte[] into a Resource
 		    ByteArrayResource resource = new ByteArrayResource(fileData);
 
